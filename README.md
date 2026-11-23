@@ -9,6 +9,10 @@
 
 The ElevenLabs API key and voice ID are read only by the server. Event details, not the user's profile, are sent to ElevenLabs to create a voice digest.
 
+## Public deployment safeguards
+
+The chat and prep-brief routes share a limit of 20 requests per IP address per 15 minutes. Voice generation is limited to 5 requests per IP address per 15 minutes. The server trusts one reverse-proxy hop to identify client IPs behind Render. These in-memory limits are intended for a single-instance demo; they reset when the server restarts and do not replace provider spending limits or authentication.
+
 ## DynamoDB favorites
 
 Create a DynamoDB table with:

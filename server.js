@@ -3,6 +3,7 @@ require("dotenv").config();
 const express = require("express");
 const path = require("path");
 const OpenAI = require("openai");
+const { rateLimit } = require("express-rate-limit");
 const { DynamoDBClient } = require("@aws-sdk/client-dynamodb");
 const {
     DeleteCommand,
@@ -17,6 +18,23 @@ if (!process.env.GROQ_API_KEY) {
 }
 
 const app = express();
+app.set("trust proxy", 1);
+
+const aiRateLimit = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Too many AI requests. Please try again later." }
+});
+const voiceRateLimit = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 5,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Too many voice requests. Please try again later." }
+});
+
 const groq = new OpenAI({
     apiKey: process.env.GROQ_API_KEY,
     baseURL: "https://api.groq.com/openai/v1"
@@ -406,7 +424,7 @@ app.post("/api/events/rank", (req, res) => {
     }
 });
 
-app.post("/api/events/voice-digest", async (req, res) => {
+app.post("/api/events/voice-digest", voiceRateLimit, async (req, res) => {
     const validation = validateProfile(req.body && req.body.profile);
     if (validation.error) {
         return res.status(400).json({ error: validation.error });
@@ -477,7 +495,7 @@ app.post("/api/events/voice-digest", async (req, res) => {
     }
 });
 
-app.post("/api/events/:eventId/prep-brief", async (req, res) => {
+app.post("/api/events/:eventId/prep-brief", aiRateLimit, async (req, res) => {
     const event = eventData.events.find((item) => item.id === req.params.eventId);
     if (!event) {
         return res.status(404).json({ error: "Event not found." });
@@ -550,7 +568,7 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "event radar.html"));
 });
 
-app.post("/api/chat", async (req, res) => {
+app.post("/api/chat", aiRateLimit, async (req, res) => {
     const message = req.body && req.body.message;
 
     if (typeof message !== "string" || !message.trim()) {
