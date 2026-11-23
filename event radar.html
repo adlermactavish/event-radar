@@ -1,0 +1,1882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#10233f">
+    <title>EventRadar — find your next hackathon</title>
+    <style>
+        :root {
+            color-scheme: light;
+            --page: #f4f6fb;
+            --panel: #ffffff;
+            --panel-soft: #f7f8fb;
+            --ink: #14233b;
+            --muted: #66748a;
+            --line: #e2e7ef;
+            --accent: #ed8122;
+            --accent-dark: #c96512;
+            --accent-wash: #fff1e2;
+            --sidebar: #10233f;
+            --sidebar-muted: #b7c3d6;
+            --shadow: 0 16px 48px rgba(16, 35, 63, .08);
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            margin: 0;
+            min-width: 320px;
+            min-height: 100vh;
+            background: var(--page);
+            color: var(--ink);
+            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            transition: background .2s ease, color .2s ease;
+        }
+
+        button, textarea, input { font: inherit; }
+        button { color: inherit; }
+        button:focus-visible, textarea:focus-visible, input:focus-visible {
+            outline: 3px solid rgba(237, 129, 34, .34);
+            outline-offset: 3px;
+        }
+
+        .app {
+            display: grid;
+            grid-template-columns: 252px minmax(0, 1fr);
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            padding: 27px 17px 18px;
+            background: var(--sidebar);
+            color: #fff;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            padding: 0 9px;
+            margin-bottom: 32px;
+            font-size: 20px;
+            font-weight: 720;
+            letter-spacing: -.7px;
+        }
+
+        .brand-mark {
+            display: grid;
+            width: 35px;
+            height: 35px;
+            place-items: center;
+            border-radius: 12px;
+            background: linear-gradient(140deg, #ffae57, #ed8122 75%);
+            box-shadow: 0 5px 16px rgba(237, 129, 34, .28);
+        }
+
+        .brand-mark svg { width: 21px; height: 21px; }
+
+        .new-chat {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 9px;
+            width: 100%;
+            min-height: 45px;
+            border: 1px solid rgba(255,255,255,.14);
+            border-radius: 12px;
+            background: rgba(255,255,255,.08);
+            color: #fff;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 620;
+            transition: background .18s ease, border-color .18s ease;
+        }
+
+        .new-chat:hover { background: rgba(255,255,255,.14); border-color: rgba(255,255,255,.22); }
+        .new-chat svg { width: 17px; height: 17px; }
+
+        .side-label {
+            margin: 31px 10px 11px;
+            color: #8995a8;
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 1.15px;
+            text-transform: uppercase;
+        }
+
+        .side-link, .recent-item {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            width: 100%;
+            min-height: 40px;
+            padding: 0 10px;
+            border: 0;
+            border-radius: 9px;
+            background: transparent;
+            color: var(--sidebar-muted);
+            text-align: left;
+            font-size: 12px;
+        }
+
+        .side-link { cursor: pointer; }
+        .side-link.active, .side-link:hover { background: rgba(255,255,255,.08); color: #fff; }
+        .side-link svg, .recent-item svg { width: 16px; height: 16px; flex: 0 0 auto; }
+        .recent-list { display: grid; gap: 3px; }
+        .recent-item { min-height: 36px; overflow: hidden; cursor: pointer; }
+        .recent-item:hover { background: rgba(255,255,255,.07); color: #fff; }
+        .recent-item span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .recent-empty { padding: 4px 10px; color: #8995a8; font-size: 11px; line-height: 1.6; }
+
+        .sidebar-bottom { margin-top: auto; }
+        .profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 8px 0;
+            border-top: 1px solid rgba(255,255,255,.1);
+        }
+
+        .avatar {
+            display: grid;
+            width: 32px;
+            height: 32px;
+            flex: 0 0 auto;
+            place-items: center;
+            border-radius: 50%;
+            background: #fff1e2;
+            color: #a84d08;
+            font-size: 12px;
+            font-weight: 750;
+        }
+
+        .profile-copy { display: grid; gap: 2px; }
+        .profile-name { color: #fff; font-size: 11px; font-weight: 600; }
+        .profile-note { color: var(--sidebar-muted); font-size: 10px; }
+
+        .main {
+            display: flex;
+            min-width: 0;
+            min-height: 100vh;
+            flex-direction: column;
+            background:
+                radial-gradient(ellipse at 54% 3%, rgba(217, 229, 245, .5), transparent 38%),
+                var(--page);
+            transition: background .2s ease;
+        }
+
+        .topbar {
+            display: flex;
+            min-height: 70px;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 36px;
+            border-bottom: 1px solid var(--line);
+            background: rgba(255,255,255,.48);
+        }
+
+        .topbar-title { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 650; }
+        .status-dot { width: 7px; height: 7px; border-radius: 50%; background: #d29b4a; box-shadow: 0 0 0 3px rgba(210,155,74,.13); }
+        .demo-tag { color: var(--muted); font-size: 11px; font-weight: 500; }
+        .topbar-actions { display: flex; align-items: center; gap: 8px; }
+
+        .icon-button {
+            display: grid;
+            width: 36px;
+            height: 36px;
+            place-items: center;
+            border: 1px solid transparent;
+            border-radius: 10px;
+            background: transparent;
+            color: #777181;
+            cursor: pointer;
+        }
+
+        .icon-button:hover { border-color: var(--line); background: var(--panel); color: var(--ink); }
+        .icon-button svg { width: 17px; height: 17px; }
+        .mobile-menu { display: none; }
+
+        .work-area {
+            display: flex;
+            width: min(100%, 920px);
+            min-height: 0;
+            flex: 1;
+            flex-direction: column;
+            align-self: center;
+            padding: 26px 40px 18px;
+        }
+
+        .welcome {
+            display: flex;
+            flex: 1;
+            flex-direction: column;
+            justify-content: center;
+            padding: 20px 0 30px;
+        }
+
+        .welcome-intro { margin: 0 auto 34px; text-align: center; }
+        .eyebrow {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 15px;
+            color: var(--accent);
+            font-size: 10px;
+            font-weight: 750;
+            letter-spacing: 1.4px;
+        }
+
+        .eyebrow svg { width: 14px; height: 14px; }
+        h1 { margin: 0; font-size: clamp(31px, 4vw, 43px); font-weight: 680; letter-spacing: -1.9px; line-height: 1.17; }
+        h1 span { color: var(--accent); }
+        .welcome-intro p { margin: 13px 0 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
+
+        .suggestions {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+            width: min(100%, 650px);
+            margin: 0 auto;
+        }
+
+        .suggestion {
+            display: flex;
+            min-height: 86px;
+            align-items: flex-start;
+            gap: 13px;
+            padding: 17px;
+            border: 1px solid var(--line);
+            border-radius: 14px;
+            background: var(--panel);
+            text-align: left;
+            cursor: pointer;
+            box-shadow: 0 2px 6px rgba(42,31,60,.02);
+            transition: transform .18s ease, border-color .18s ease, box-shadow .18s ease;
+        }
+
+        .suggestion:hover { transform: translateY(-2px); border-color: #f4c18f; box-shadow: 0 9px 22px rgba(16,35,63,.08); }
+        .suggestion-icon {
+            display: grid;
+            width: 34px;
+            height: 34px;
+            flex: 0 0 auto;
+            place-items: center;
+            border-radius: 10px;
+            background: var(--accent-wash);
+            color: var(--accent);
+        }
+
+        .suggestion-icon svg { width: 17px; height: 17px; }
+        .suggestion-copy { display: grid; gap: 5px; padding-top: 1px; }
+        .suggestion-title { font-size: 12px; font-weight: 680; }
+        .suggestion-description { color: var(--muted); font-size: 11px; line-height: 1.45; }
+
+        .conversation {
+            display: none;
+            flex: 1;
+            flex-direction: column;
+            gap: 24px;
+            overflow-y: auto;
+            padding: 15px 3px 25px;
+            scrollbar-color: #ccd4e0 transparent;
+            scrollbar-width: thin;
+        }
+
+        .message { display: flex; gap: 12px; align-items: flex-start; }
+        .message.user { justify-content: flex-end; }
+        .message-avatar {
+            display: grid;
+            width: 30px;
+            height: 30px;
+            flex: 0 0 auto;
+            place-items: center;
+            border-radius: 10px;
+            background: var(--accent-wash);
+            color: var(--accent);
+        }
+
+        .message-avatar svg { width: 16px; height: 16px; }
+        .message-body { max-width: min(650px, 84%); }
+        .message-label { margin: 1px 0 7px; color: var(--muted); font-size: 10px; font-weight: 650; }
+        .message-text { color: var(--ink); font-size: 13px; line-height: 1.75; white-space: pre-wrap; overflow-wrap: anywhere; }
+        .message-text.markdown-content { white-space: normal; }
+        .markdown-content > :first-child { margin-top: 0; }
+        .markdown-content > :last-child { margin-bottom: 0; }
+        .markdown-content p { margin: 0 0 .8em; }
+        .markdown-content h1, .markdown-content h2, .markdown-content h3,
+        .markdown-content h4, .markdown-content h5, .markdown-content h6 {
+            margin: 1em 0 .45em;
+            font-size: 1.08em;
+            font-weight: 700;
+            line-height: 1.4;
+        }
+        .markdown-content ul, .markdown-content ol { margin: .35em 0 .9em; padding-left: 1.5em; }
+        .markdown-content li + li { margin-top: .25em; }
+        .markdown-content blockquote {
+            margin: .8em 0;
+            padding: .2em .85em;
+            border-left: 3px solid var(--accent);
+            color: var(--muted);
+        }
+        .markdown-content a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+        .markdown-content code {
+            padding: .12em .35em;
+            border-radius: 5px;
+            background: var(--panel-soft);
+            font-family: Consolas, "Courier New", monospace;
+            font-size: .92em;
+        }
+        .markdown-content pre {
+            overflow-x: auto;
+            margin: .75em 0;
+            padding: 12px;
+            border: 1px solid var(--line);
+            border-radius: 9px;
+            background: var(--panel-soft);
+        }
+        .markdown-content pre code { padding: 0; background: transparent; }
+        .markdown-table-wrap { overflow-x: auto; margin: .8em 0; border: 1px solid var(--line); border-radius: 9px; }
+        .markdown-table { width: 100%; min-width: 440px; border-collapse: collapse; font-size: 12px; }
+        .markdown-table th, .markdown-table td {
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--line);
+            text-align: left;
+            vertical-align: top;
+        }
+        .markdown-table th { background: var(--panel-soft); font-weight: 680; }
+        .markdown-table tr:last-child td { border-bottom: 0; }
+        .markdown-content hr { margin: 1em 0; border: 0; border-top: 1px solid var(--line); }
+        .user .message-text { padding: 11px 15px; border: 1px solid #f4d0ad; border-radius: 15px 15px 4px 15px; background: var(--accent-wash); }
+        .typing-dots { display: flex; gap: 5px; padding: 8px 1px; }
+        .typing-dots span { width: 6px; height: 6px; border-radius: 50%; background: #c27b2c; animation: pulse 1s infinite ease-in-out; }
+        .typing-dots span:nth-child(2) { animation-delay: .15s; }
+        .typing-dots span:nth-child(3) { animation-delay: .3s; }
+        @keyframes pulse { 0%, 60%, 100% { transform: translateY(0); opacity: .48; } 30% { transform: translateY(-4px); opacity: 1; } }
+
+        .composer-wrap { width: min(100%, 730px); align-self: center; padding-bottom: 5px; }
+        .composer {
+            padding: 12px 13px 9px 17px;
+            border: 1px solid var(--line);
+            border-radius: 17px;
+            background: var(--panel);
+            box-shadow: var(--shadow);
+            transition: border-color .18s ease, box-shadow .18s ease;
+        }
+
+        .composer:focus-within { border-color: #efb77d; box-shadow: 0 0 0 3px rgba(237,129,34,.08), var(--shadow); }
+        .composer textarea {
+            display: block;
+            width: 100%;
+            min-height: 34px;
+            max-height: 140px;
+            resize: none;
+            border: 0;
+            outline: 0;
+            background: transparent;
+            color: var(--ink);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+
+        .composer textarea::placeholder { color: #aaa5b1; }
+        .composer textarea:focus-visible { outline: 0; }
+        .composer-bottom { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 4px; }
+        .composer-hint { color: #a09aa8; font-size: 10px; }
+        .send-button {
+            display: grid;
+            width: 35px;
+            height: 35px;
+            flex: 0 0 auto;
+            place-items: center;
+            border: 0;
+            border-radius: 11px;
+            background: var(--accent);
+            color: #fff;
+            cursor: pointer;
+            transition: background .18s ease, transform .18s ease, opacity .18s ease;
+        }
+
+        .send-button:hover:not(:disabled) { transform: translateY(-1px); background: var(--accent-dark); }
+        .send-button:disabled { cursor: wait; opacity: .58; }
+        .send-button svg { width: 16px; height: 16px; }
+        .disclaimer { margin: 10px 0 0; color: #a29ca9; text-align: center; font-size: 10px; line-height: 1.5; }
+        .hidden { display: none !important; }
+
+        .events-view {
+            width: min(100%, 1260px);
+            flex: 1;
+            align-self: center;
+            padding: 34px clamp(18px, 4vw, 48px) 44px;
+        }
+
+        .events-hero {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            gap: 24px;
+            margin-bottom: 26px;
+        }
+
+        .events-hero .eyebrow { margin-bottom: 12px; }
+        .events-hero h1 { font-size: clamp(32px, 4vw, 46px); }
+        .events-hero p { max-width: 630px; margin: 12px 0 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
+        .hero-note {
+            max-width: 245px;
+            padding: 15px 17px;
+            border: 1px solid #f1d2b2;
+            border-radius: 14px;
+            background: var(--accent-wash);
+            color: #68401e;
+            font-size: 12px;
+            line-height: 1.55;
+        }
+        .hero-note strong { display: block; margin-bottom: 4px; color: #a84d08; font-size: 12px; }
+
+        .profile-layout {
+            display: grid;
+            grid-template-columns: minmax(265px, .75fr) minmax(0, 1.6fr);
+            align-items: start;
+            gap: 20px;
+        }
+
+        .student-profile-card, .results-panel {
+            min-width: 0;
+            padding: 22px;
+            border: 1px solid var(--line);
+            border-radius: 17px;
+            background: var(--panel);
+            box-shadow: 0 4px 18px rgba(16,35,63,.035);
+        }
+
+        .section-heading { margin-bottom: 18px; }
+        .section-heading h2, .results-heading h2 { margin: 0; font-size: 17px; letter-spacing: -.3px; }
+        .section-heading p, .results-heading p { margin: 6px 0 0; color: var(--muted); font-size: 12px; line-height: 1.5; }
+        .profile-form { display: grid; gap: 14px; }
+        .form-field { display: grid; gap: 6px; }
+        .form-field label { color: var(--ink); font-size: 11px; font-weight: 680; }
+        .form-field input {
+            width: 100%;
+            min-height: 42px;
+            padding: 10px 12px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: var(--panel);
+            color: var(--ink);
+            font-size: 12px;
+        }
+        .form-field input::placeholder { color: #9aa4b4; }
+        .field-help { color: var(--muted); font-size: 10px; line-height: 1.45; }
+        .primary-button {
+            display: inline-flex;
+            min-height: 43px;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 0 16px;
+            border: 0;
+            border-radius: 10px;
+            background: var(--accent);
+            color: #fff;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 700;
+            transition: background .18s ease, transform .18s ease, opacity .18s ease;
+        }
+        .primary-button:hover:not(:disabled) { transform: translateY(-1px); background: var(--accent-dark); }
+        .primary-button:disabled { cursor: wait; opacity: .65; }
+        .profile-status, .events-status, .favorites-status { min-height: 18px; margin: 0; color: var(--muted); font-size: 11px; line-height: 1.5; }
+        .profile-status.error, .events-status.error, .favorites-status.error { color: #b42318; }
+        .privacy-note { margin: 0; color: var(--muted); font-size: 10px; line-height: 1.55; }
+
+        .results-heading {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .voice-digest-controls {
+            display: grid;
+            grid-template-columns: auto minmax(0, 1fr);
+            align-items: center;
+            gap: 9px 12px;
+            margin-bottom: 14px;
+            padding: 11px 12px;
+            border: 1px solid var(--line);
+            border-radius: 11px;
+            background: var(--panel-soft);
+        }
+        .voice-button {
+            display: inline-flex;
+            min-height: 38px;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 0 12px;
+            border: 0;
+            border-radius: 9px;
+            background: var(--accent);
+            color: #fff;
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: 700;
+        }
+        .voice-button:hover:not(:disabled) { background: var(--accent-dark); }
+        .voice-button:disabled { cursor: not-allowed; opacity: .55; }
+        .voice-button svg { width: 16px; height: 16px; }
+        .voice-status { min-width: 0; margin: 0; color: var(--muted); font-size: 10px; line-height: 1.5; }
+        .voice-status.error { color: #b42318; }
+        .voice-privacy { grid-column: 1 / -1; margin: 0; color: var(--muted); font-size: 9px; line-height: 1.4; }
+        .voice-audio { grid-column: 1 / -1; width: min(100%, 520px); height: 38px; }
+        .result-count {
+            flex: 0 0 auto;
+            padding: 6px 9px;
+            border-radius: 20px;
+            background: var(--accent-wash);
+            color: #a84d08;
+            font-size: 10px;
+            font-weight: 700;
+        }
+        .results-heading-actions { display: flex; flex: 0 0 auto; align-items: center; gap: 8px; }
+        .show-favorites-button {
+            min-height: 30px;
+            padding: 0 9px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--panel);
+            color: var(--ink);
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: 650;
+        }
+        .show-favorites-button:disabled { cursor: not-allowed; opacity: .55; }
+        .event-list { display: grid; gap: 12px; }
+        .event-card {
+            min-width: 0;
+            padding: 16px;
+            border: 1px solid var(--line);
+            border-radius: 13px;
+            background: var(--panel);
+        }
+        .event-card-top { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+        .event-card-title { display: flex; min-width: 0; align-items: flex-start; gap: 10px; }
+        .event-card h3 { margin: 0; color: var(--ink); font-size: 15px; line-height: 1.4; }
+        .favorite-button {
+            flex: 0 0 auto;
+            padding: 5px 8px;
+            border: 1px solid var(--line);
+            border-radius: 8px;
+            background: var(--panel);
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: 650;
+        }
+        .favorite-button[aria-pressed="true"] { border-color: #ed8122; background: var(--accent-wash); color: #a84d08; }
+        .favorite-button:disabled { cursor: not-allowed; opacity: .55; }
+        .event-subtitle { margin: 5px 0 0; color: var(--muted); font-size: 11px; }
+        .event-badges { display: flex; flex: 0 0 auto; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
+        .event-badge {
+            padding: 5px 8px;
+            border-radius: 20px;
+            background: #eef2f8;
+            color: #40516b;
+            font-size: 9px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+        .event-badge.score { background: var(--accent-wash); color: #a84d08; }
+        .event-badge.closed { background: #fef0ef; color: #b42318; }
+        .event-facts {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 11px 16px;
+            margin: 14px 0 0;
+        }
+        .event-fact { min-width: 0; }
+        .event-fact.wide { grid-column: 1 / -1; }
+        .event-fact dt { margin-bottom: 4px; color: var(--muted); font-size: 9px; font-weight: 750; letter-spacing: .5px; text-transform: uppercase; }
+        .event-fact dd { margin: 0; color: var(--ink); font-size: 11px; line-height: 1.5; overflow-wrap: anywhere; }
+        .match-reason {
+            margin: 13px 0 0;
+            padding: 10px 11px;
+            border-left: 3px solid var(--accent);
+            border-radius: 0 8px 8px 0;
+            background: var(--accent-wash);
+            color: #68401e;
+            font-size: 11px;
+            line-height: 1.5;
+        }
+        .match-score-detail { display: block; margin-top: 4px; color: #895b32; font-size: 9px; }
+        .event-link {
+            display: inline-flex;
+            align-items: center;
+            margin-top: 12px;
+            color: var(--accent-dark);
+            font-size: 11px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+        .event-link:hover { text-decoration: underline; text-underline-offset: 3px; }
+        .prep-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 12px;
+            padding: 8px 11px;
+            border: 1px solid #efc69f;
+            border-radius: 9px;
+            background: var(--accent-wash);
+            color: var(--accent-dark);
+            cursor: pointer;
+            font-size: 10px;
+            font-weight: 700;
+        }
+        .prep-button:hover:not(:disabled) { border-color: var(--accent); }
+        .prep-button:disabled { cursor: wait; opacity: .65; }
+        .prep-brief {
+            display: grid;
+            gap: 12px;
+            margin-top: 12px;
+            padding: 13px;
+            border: 1px solid var(--line);
+            border-radius: 10px;
+            background: var(--panel-soft);
+        }
+        .prep-section h4 { margin: 0 0 6px; color: var(--ink); font-size: 11px; }
+        .prep-item { margin: 0; color: var(--muted); font-size: 11px; line-height: 1.55; overflow-wrap: anywhere; }
+        .prep-citation { display: inline-block; margin-left: 5px; color: var(--accent-dark); font-size: 10px; font-weight: 700; }
+        .prep-error { color: #b42318; font-size: 11px; }
+        .empty-events {
+            padding: 28px 18px;
+            border: 1px dashed var(--line);
+            border-radius: 12px;
+            color: var(--muted);
+            text-align: center;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        .dark-theme {
+            color-scheme: dark;
+            --page: #111b2b;
+            --panel: #18253a;
+            --panel-soft: #202f46;
+            --ink: #f3f6fb;
+            --muted: #aab6c8;
+            --line: #304058;
+            --accent: #ff9a42;
+            --accent-dark: #ffad63;
+            --accent-wash: #3a2a1c;
+            --shadow: 0 16px 48px rgba(0,0,0,.2);
+        }
+
+        .dark-theme .main { background: radial-gradient(ellipse at 54% 3%, rgba(28,57,91,.25), transparent 38%), var(--page); }
+        .dark-theme .topbar { background: rgba(20,35,59,.65); }
+        .dark-theme .suggestion { box-shadow: none; }
+        .dark-theme .suggestion:hover { border-color: #87572f; }
+        .dark-theme .composer { border-color: var(--line); }
+        .dark-theme .user .message-text { border-color: #6d492c; }
+        .dark-theme .hero-note, .dark-theme .match-reason { color: #f4c89e; }
+        .dark-theme .hero-note strong, .dark-theme .result-count, .dark-theme .event-badge.score { color: #ffc184; }
+        .dark-theme .event-badge { background: #26364e; color: #d4dfef; }
+        .dark-theme .event-badge.closed { background: #482b2c; color: #ffb4ad; }
+        .dark-theme .match-score-detail { color: #e6b98f; }
+        .dark-theme .prep-button { border-color: #765334; }
+        .dark-theme .favorite-button[aria-pressed="true"] { background: #482f20; color: #ffc184; }
+
+        @media (max-width: 760px) {
+            .app { grid-template-columns: 1fr; }
+            .sidebar {
+                position: fixed;
+                z-index: 5;
+                inset: 0 auto 0 0;
+                width: 252px;
+                min-height: 100dvh;
+                transform: translateX(-105%);
+                transition: transform .22s ease;
+                box-shadow: 12px 0 35px rgba(0,0,0,.15);
+            }
+            .sidebar.open { transform: translateX(0); }
+            .mobile-menu { display: grid; }
+            .topbar { min-height: 62px; padding: 0 16px; }
+            .work-area { min-height: calc(100dvh - 62px); padding: 20px 18px 14px; }
+            .welcome { padding: 15px 0 25px; }
+            .welcome-intro { margin-bottom: 27px; }
+            .welcome-intro p { font-size: 13px; }
+            .suggestions { gap: 9px; }
+            .suggestion { min-height: 91px; gap: 10px; padding: 13px 11px; }
+            .suggestion-icon { width: 30px; height: 30px; }
+            .suggestion-title { font-size: 11px; }
+            .suggestion-description { font-size: 10px; }
+            .composer-wrap { padding-bottom: max(4px, env(safe-area-inset-bottom)); }
+            .events-view { padding: 24px 18px 34px; }
+            .events-hero { align-items: flex-start; flex-direction: column; gap: 14px; }
+            .hero-note { max-width: none; }
+            .profile-layout { grid-template-columns: 1fr; }
+        }
+
+        @media (max-width: 420px) {
+            .suggestions { grid-template-columns: 1fr; }
+            .suggestion { min-height: 72px; }
+            .demo-tag { display: none; }
+            .work-area { padding-right: 14px; padding-left: 14px; }
+            .events-view { padding-right: 14px; padding-left: 14px; }
+            .student-profile-card, .results-panel { padding: 16px; }
+            .event-card { padding: 13px; }
+            .event-card-top { flex-direction: column; }
+            .event-badges { justify-content: flex-start; }
+            .event-facts { grid-template-columns: 1fr; }
+            .event-fact.wide { grid-column: auto; }
+            .voice-digest-controls { grid-template-columns: 1fr; }
+            .voice-button { width: 100%; }
+            .voice-privacy, .voice-audio { grid-column: auto; }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; transition-duration: .01ms !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+            <div class="brand">
+                <span class="brand-mark" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none"><circle cx="10.8" cy="12.2" r="7" stroke="white" stroke-width="1.7"/><path d="m15.8 7.2 5-5m-4.1 5.9 4.1-.9-.9 4.1" stroke="white" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10.8" cy="12.2" r="2" fill="white"/></svg>
+                </span>
+                <span>EventRadar</span>
+            </div>
+
+            <button class="new-chat" id="newChatButton" type="button">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 5v14M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                New conversation
+            </button>
+
+            <div class="side-label">Workspace</div>
+            <button class="side-link active" id="homeButton" type="button">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m4 10 8-6 8 6v9a1 1 0 0 1-1 1h-5v-6h-4v6H5a1 1 0 0 1-1-1v-9Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                <span>Explore events</span>
+            </button>
+            <button class="side-link" id="chatNavButton" type="button">
+                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20 11.5a7.5 7.5 0 0 1-7.5 7.5H6l-3 2 1-4.1A7.5 7.5 0 1 1 20 11.5Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                <span>AI assistant</span>
+            </button>
+
+            <div class="side-label">Recent conversations</div>
+            <div class="recent-list" id="recentList">
+                <div class="recent-empty" id="recentEmpty">Your conversations will show up here.</div>
+            </div>
+
+            <div class="sidebar-bottom">
+                <div class="profile">
+                    <div class="avatar" aria-hidden="true">ER</div>
+                    <div class="profile-copy">
+                        <span class="profile-name">EventRadar</span>
+                        <span class="profile-note">Student hackathon finder</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="main">
+            <header class="topbar">
+                <div class="topbar-title">
+                    <button class="icon-button mobile-menu" id="menuButton" type="button" aria-label="Open navigation" aria-expanded="false">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                    </button>
+                    <span id="topbarTitle">Explore events</span>
+                    <span class="status-dot" aria-hidden="true"></span>
+                    <span class="demo-tag" id="topbarHint">Student hackathons · India</span>
+                </div>
+                <div class="topbar-actions">
+                    <button class="icon-button" id="themeButton" type="button" aria-label="Switch to dark theme" title="Toggle theme">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.2 15.1A8.4 8.4 0 0 1 8.9 3.8 8.5 8.5 0 1 0 20.2 15.1Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>
+                    </button>
+                </div>
+            </header>
+
+            <section class="events-view" id="eventsView" aria-label="Find hackathons">
+                <div class="events-hero">
+                    <div>
+                        <div class="eyebrow">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.8" cy="12.2" r="7" stroke="currentColor" stroke-width="1.7"/><path d="m15.8 7.2 5-5m-4.1 5.9 4.1-.9-.9 4.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            YOUR NEXT BUILD STARTS HERE
+                        </div>
+                        <h1>Find your next<br><span>hackathon.</span></h1>
+                        <p>Tell us what you like building and where you are. EventRadar ranks student opportunities using your skills, interests, city, and registration deadlines.</p>
+                    </div>
+                    <div class="hero-note">
+                        <strong>Simple, explainable matches</strong>
+                        Every match includes a short reason. You can always open the official event page for details.
+                    </div>
+                </div>
+
+                <div class="profile-layout">
+                    <section class="student-profile-card" aria-labelledby="profileHeading">
+                        <div class="section-heading">
+                            <h2 id="profileHeading">Your student profile</h2>
+                            <p>Use comma-separated tags for skills and interests.</p>
+                        </div>
+                        <form class="profile-form" id="profileForm">
+                            <div class="form-field">
+                                <label for="skillsInput">Skills</label>
+                                <input id="skillsInput" name="skills" type="text" maxlength="2000" placeholder="JavaScript, UI/UX, Python" required>
+                                <span class="field-help">Add the skills you would bring to a team.</span>
+                            </div>
+                            <div class="form-field">
+                                <label for="yearInput">Study year</label>
+                                <input id="yearInput" name="year" type="text" maxlength="40" placeholder="e.g. 2nd year" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="cityInput">City</label>
+                                <input id="cityInput" name="city" type="text" maxlength="80" placeholder="e.g. Bengaluru" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="interestsInput">Interests</label>
+                                <input id="interestsInput" name="interests" type="text" maxlength="2000" placeholder="AI, climate, accessibility" required>
+                                <span class="field-help">Separate each interest with a comma.</span>
+                            </div>
+                            <button class="primary-button" id="findMatchesButton" type="submit">
+                                Find my matches
+                                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true" width="16" height="16"><path d="M5 12h14m-6-6 6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </button>
+                            <p class="profile-status" id="profileStatus" role="status" aria-live="polite"></p>
+                            <p class="privacy-note">Only skills, study year, city, and interests are saved in this browser and sent to the server to rank events.</p>
+                        </form>
+                    </section>
+
+                    <section class="results-panel" aria-labelledby="resultsHeading">
+                        <div class="results-heading">
+                            <div>
+                                <h2 id="resultsHeading">Hackathons to explore</h2>
+                                <p id="resultsSummary">Loading the event list…</p>
+                            </div>
+                            <div class="results-heading-actions">
+                                <button class="show-favorites-button" id="showFavoritesButton" type="button" aria-pressed="false" disabled>Show saved</button>
+                                <span class="result-count" id="resultCount" aria-label="Number of events">—</span>
+                            </div>
+                        </div>
+                        <div class="voice-digest-controls">
+                            <button class="voice-button" id="voiceDigestButton" type="button" disabled>
+                                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 10v4m4-7v10m4-13v16m4-13v10m4-7v4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                                Create voice digest of top 3
+                            </button>
+                            <p class="voice-status" id="voiceStatus" role="status" aria-live="polite">Rank events with your profile to enable the digest.</p>
+                            <p class="voice-privacy">Only event details are sent to ElevenLabs for audio; your profile is not included.</p>
+                            <audio class="voice-audio hidden" id="voiceAudio" controls preload="none" aria-label="Play voice digest of your top three matches"></audio>
+                        </div>
+                        <p class="events-status" id="eventsStatus" role="status" aria-live="polite"></p>
+                        <p class="favorites-status" id="favoritesStatus" role="status" aria-live="polite">Loading saved hackathons…</p>
+                        <p class="privacy-note">Saved event IDs sync to DynamoDB with an anonymous browser ID; your profile is not stored there.</p>
+                        <div class="event-list" id="eventResults"></div>
+                    </section>
+                </div>
+            </section>
+
+            <section class="work-area hidden" id="chatView" aria-label="AI conversation">
+                <section class="welcome" id="welcome">
+                    <div class="welcome-intro">
+                        <div class="eyebrow">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m12 2 2.2 7.8L22 12l-7.8 2.2L12 22l-2.2-7.8L2 12l7.8-2.2L12 2Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+                            YOUR HACKATHON CO-PILOT
+                        </div>
+                        <h1>What will you<br><span>build next?</span></h1>
+                        <p>Brainstorm a project, prepare your pitch, or make a realistic build plan for your next event.</p>
+                    </div>
+
+                    <div class="suggestions" aria-label="Try asking">
+                        <button class="suggestion" type="button" data-prompt="Help me brainstorm a hackathon project idea for climate tech">
+                            <span class="suggestion-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3.5" y="4.5" width="17" height="15" rx="2.5" stroke="currentColor" stroke-width="1.6"/><path d="M3.5 9h17M8 6.8h.1M11 6.8h.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></span>
+                            <span class="suggestion-copy"><span class="suggestion-title">Brainstorm a project</span><span class="suggestion-description">Find a strong idea for a challenge</span></span>
+                        </button>
+                        <button class="suggestion" type="button" data-prompt="Help me make a weekend hackathon build plan for a small team">
+                            <span class="suggestion-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M5 19 6.6 14.4 16.8 4.2a2.1 2.1 0 0 1 3 3L9.6 17.4 5 19Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="m14.8 6.2 3 3" stroke="currentColor" stroke-width="1.6"/></svg></span>
+                            <span class="suggestion-copy"><span class="suggestion-title">Plan your build</span><span class="suggestion-description">Scope an MVP that fits the time</span></span>
+                        </button>
+                        <button class="suggestion" type="button" data-prompt="How can I make a clear and convincing hackathon project pitch for judges?">
+                            <span class="suggestion-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="8.5" stroke="currentColor" stroke-width="1.6"/><path d="M9.7 9a2.4 2.4 0 1 1 4.1 1.7c-1.1 1-1.8 1.3-1.8 2.8M12 16.7v.1" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></span>
+                            <span class="suggestion-copy"><span class="suggestion-title">Prepare your pitch</span><span class="suggestion-description">Explain your idea to the judges</span></span>
+                        </button>
+                        <button class="suggestion" type="button" data-prompt="Help me choose a simple tech stack for my student hackathon project">
+                            <span class="suggestion-icon"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="5.5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M8 3.5v4M16 3.5v4M4 10h16m-11 4 1.5 1.5L14 12" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+                            <span class="suggestion-copy"><span class="suggestion-title">Choose your stack</span><span class="suggestion-description">Pick tools that fit the project</span></span>
+                        </button>
+                    </div>
+                </section>
+
+                <section class="conversation" id="conversation" aria-live="polite" aria-label="Conversation messages"></section>
+
+                <div class="composer-wrap">
+                    <form class="composer" id="chatForm">
+                        <textarea id="promptInput" rows="1" aria-label="Message EventRadar AI" placeholder="Ask about your hackathon project..."></textarea>
+                        <div class="composer-bottom">
+                            <span class="composer-hint">Press Enter to send · Shift + Enter for a new line</span>
+                            <button class="send-button" id="sendButton" type="submit" aria-label="Send message">
+                                <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 19V5m-6 6 6-6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                            </button>
+                        </div>
+                    </form>
+                    <p class="disclaimer">AI can make mistakes. Verify important facts with reliable sources.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const form = document.getElementById("chatForm");
+        const input = document.getElementById("promptInput");
+        const sendButton = document.getElementById("sendButton");
+        const welcome = document.getElementById("welcome");
+        const conversation = document.getElementById("conversation");
+        const recentList = document.getElementById("recentList");
+        const recentEmpty = document.getElementById("recentEmpty");
+        const sidebar = document.getElementById("sidebar");
+        const menuButton = document.getElementById("menuButton");
+        const eventsView = document.getElementById("eventsView");
+        const chatView = document.getElementById("chatView");
+        const eventsNavButton = document.getElementById("homeButton");
+        const chatNavButton = document.getElementById("chatNavButton");
+        const topbarTitle = document.getElementById("topbarTitle");
+        const profileForm = document.getElementById("profileForm");
+        const profileStatus = document.getElementById("profileStatus");
+        const eventsStatus = document.getElementById("eventsStatus");
+        const favoritesStatus = document.getElementById("favoritesStatus");
+        const resultsSummary = document.getElementById("resultsSummary");
+        const resultCount = document.getElementById("resultCount");
+        const eventResults = document.getElementById("eventResults");
+        const showFavoritesButton = document.getElementById("showFavoritesButton");
+        const findMatchesButton = document.getElementById("findMatchesButton");
+        const voiceDigestButton = document.getElementById("voiceDigestButton");
+        const voiceStatus = document.getElementById("voiceStatus");
+        const voiceAudio = document.getElementById("voiceAudio");
+        let voiceObjectUrl = null;
+        let rankedProfileSnapshot = null;
+        let browserId = null;
+        let favoriteEventIds = new Set();
+        let favoritesReady = false;
+        let allEvents = [];
+        let currentEventItems = [];
+        let currentListIsRanked = false;
+        let showingSavedOnly = false;
+
+        const assistantIcon = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m12 2.8 2.1 7.1 7.1 2.1-7.1 2.1-2.1 7.1-2.1-7.1-7.1-2.1 7.1-2.1L12 2.8Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/></svg>';
+
+        function closeSidebar() {
+            sidebar.classList.remove("open");
+            menuButton.setAttribute("aria-expanded", "false");
+        }
+
+        function showView(view) {
+            const showEvents = view === "events";
+            eventsView.classList.toggle("hidden", !showEvents);
+            chatView.classList.toggle("hidden", showEvents);
+            eventsNavButton.classList.toggle("active", showEvents);
+            chatNavButton.classList.toggle("active", !showEvents);
+            topbarTitle.textContent = showEvents ? "Explore events" : "AI assistant";
+            closeSidebar();
+        }
+
+        function showConversation() {
+            showView("chat");
+            welcome.classList.add("hidden");
+            conversation.style.display = "flex";
+        }
+
+        function appendInlineMarkdown(parent, text) {
+            const pattern = /\*\*([^*]+)\*\*|__([^_]+)__|`([^`]+)`|\*([^*]+)\*|\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
+            let offset = 0;
+            let match;
+
+            while ((match = pattern.exec(text)) !== null) {
+                parent.append(document.createTextNode(text.slice(offset, match.index)));
+
+                if (match[5]) {
+                    const link = document.createElement("a");
+                    link.href = match[6];
+                    link.target = "_blank";
+                    link.rel = "noopener noreferrer";
+                    link.textContent = match[5];
+                    parent.append(link);
+                } else {
+                    const tag = match[3] ? "code" : match[4] ? "em" : "strong";
+                    const formatted = document.createElement(tag);
+                    formatted.textContent = match[1] || match[2] || match[3] || match[4];
+                    parent.append(formatted);
+                }
+
+                offset = pattern.lastIndex;
+            }
+
+            parent.append(document.createTextNode(text.slice(offset)));
+        }
+
+        function splitMarkdownTableRow(line) {
+            return line.trim().replace(/^\|/, "").replace(/\|$/, "").split("|").map(function (cell) {
+                return cell.trim();
+            });
+        }
+
+        function isMarkdownTable(lines, index) {
+            if (index + 1 >= lines.length || !lines[index].includes("|")) return false;
+            const separator = splitMarkdownTableRow(lines[index + 1]);
+            return separator.length > 1 && separator.every(function (cell) {
+                return /^:?-{3,}:?$/.test(cell);
+            });
+        }
+
+        function isMarkdownBlockStart(lines, index) {
+            const line = lines[index].trim();
+            return /^#{1,6}\s+/.test(line) ||
+                /^```/.test(line) ||
+                /^>\s?/.test(line) ||
+                /^(?:[-*+]\s+|\d+[.)]\s+)/.test(line) ||
+                /^(?:-{3,}|\*{3,}|_{3,})$/.test(line) ||
+                isMarkdownTable(lines, index);
+        }
+
+        function renderMarkdown(container, markdown) {
+            const lines = markdown.replace(/\r\n?/g, "\n").split("\n");
+            let index = 0;
+
+            while (index < lines.length) {
+                const line = lines[index];
+                const trimmed = line.trim();
+
+                if (!trimmed) {
+                    index++;
+                    continue;
+                }
+
+                const heading = /^(#{1,6})\s+(.+)$/.exec(trimmed);
+                if (heading) {
+                    const element = document.createElement("h" + heading[1].length);
+                    appendInlineMarkdown(element, heading[2]);
+                    container.append(element);
+                    index++;
+                    continue;
+                }
+
+                if (/^```/.test(trimmed)) {
+                    const codeLines = [];
+                    index++;
+                    while (index < lines.length && !/^```/.test(lines[index].trim())) {
+                        codeLines.push(lines[index]);
+                        index++;
+                    }
+                    if (index < lines.length) index++;
+
+                    const pre = document.createElement("pre");
+                    const code = document.createElement("code");
+                    code.textContent = codeLines.join("\n");
+                    pre.append(code);
+                    container.append(pre);
+                    continue;
+                }
+
+                if (isMarkdownTable(lines, index)) {
+                    const headers = splitMarkdownTableRow(lines[index]);
+                    const rows = [];
+                    index += 2;
+                    while (index < lines.length && lines[index].trim() && lines[index].includes("|")) {
+                        rows.push(splitMarkdownTableRow(lines[index]));
+                        index++;
+                    }
+
+                    const wrapper = document.createElement("div");
+                    wrapper.className = "markdown-table-wrap";
+                    const table = document.createElement("table");
+                    table.className = "markdown-table";
+                    const thead = document.createElement("thead");
+                    const headerRow = document.createElement("tr");
+                    headers.forEach(function (value) {
+                        const cell = document.createElement("th");
+                        appendInlineMarkdown(cell, value);
+                        headerRow.append(cell);
+                    });
+                    thead.append(headerRow);
+                    table.append(thead);
+
+                    const tbody = document.createElement("tbody");
+                    rows.forEach(function (row) {
+                        const tableRow = document.createElement("tr");
+                        headers.forEach(function (_, cellIndex) {
+                            const cell = document.createElement("td");
+                            appendInlineMarkdown(cell, row[cellIndex] || "");
+                            tableRow.append(cell);
+                        });
+                        tbody.append(tableRow);
+                    });
+                    table.append(tbody);
+                    wrapper.append(table);
+                    container.append(wrapper);
+                    continue;
+                }
+
+                if (/^(?:-{3,}|\*{3,}|_{3,})$/.test(trimmed)) {
+                    container.append(document.createElement("hr"));
+                    index++;
+                    continue;
+                }
+
+                const listMatch = /^([-*+]|\d+[.)])\s+(.+)$/.exec(trimmed);
+                if (listMatch) {
+                    const ordered = /^\d/.test(listMatch[1]);
+                    const list = document.createElement(ordered ? "ol" : "ul");
+                    while (index < lines.length) {
+                        const itemMatch = /^([-*+]|\d+[.)])\s+(.+)$/.exec(lines[index].trim());
+                        if (!itemMatch || /^\d/.test(itemMatch[1]) !== ordered) break;
+                        const item = document.createElement("li");
+                        appendInlineMarkdown(item, itemMatch[2]);
+                        list.append(item);
+                        index++;
+                    }
+                    container.append(list);
+                    continue;
+                }
+
+                if (/^>\s?/.test(trimmed)) {
+                    const quoteLines = [];
+                    while (index < lines.length && /^>\s?/.test(lines[index].trim())) {
+                        quoteLines.push(lines[index].trim().replace(/^>\s?/, ""));
+                        index++;
+                    }
+                    const quote = document.createElement("blockquote");
+                    const paragraph = document.createElement("p");
+                    appendInlineMarkdown(paragraph, quoteLines.join(" "));
+                    quote.append(paragraph);
+                    container.append(quote);
+                    continue;
+                }
+
+                const paragraphLines = [];
+                while (index < lines.length && lines[index].trim() && !isMarkdownBlockStart(lines, index)) {
+                    paragraphLines.push(lines[index].trim());
+                    index++;
+                }
+                if (paragraphLines.length) {
+                    const paragraph = document.createElement("p");
+                    appendInlineMarkdown(paragraph, paragraphLines.join(" "));
+                    container.append(paragraph);
+                }
+            }
+        }
+
+        function addMessage(role, text) {
+            const message = document.createElement("article");
+            message.className = "message " + role;
+
+            if (role === "assistant") {
+                const avatar = document.createElement("div");
+                avatar.className = "message-avatar";
+                avatar.innerHTML = assistantIcon;
+
+                const body = document.createElement("div");
+                body.className = "message-body";
+                const label = document.createElement("div");
+                label.className = "message-label";
+                label.textContent = "EventRadar · AI response";
+                const content = document.createElement("div");
+                content.className = "message-text markdown-content";
+                renderMarkdown(content, text);
+                body.append(label, content);
+                message.append(avatar, body);
+            } else {
+                const content = document.createElement("div");
+                content.className = "message-body message-text";
+                content.textContent = text;
+                message.append(content);
+            }
+
+            conversation.append(message);
+            conversation.scrollTop = conversation.scrollHeight;
+            return message;
+        }
+
+        function addRecent(prompt) {
+            recentEmpty.classList.add("hidden");
+            const item = document.createElement("button");
+            item.type = "button";
+            item.className = "recent-item";
+            item.title = prompt;
+            item.innerHTML = '<svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 20a8 8 0 1 0-7.2-4.5M4 12v4h4m4-8v4l2.5 1.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+            const label = document.createElement("span");
+            label.textContent = prompt;
+            item.append(label);
+            item.addEventListener("click", function () {
+                showView("chat");
+                input.value = prompt;
+                input.focus();
+                resizeInput();
+            });
+            recentList.insertBefore(item, recentEmpty.nextSibling);
+            while (recentList.querySelectorAll(".recent-item").length > 5) {
+                recentList.removeChild(recentList.lastElementChild);
+            }
+        }
+
+        function resizeInput() {
+            input.style.height = "auto";
+            input.style.height = Math.min(input.scrollHeight, 140) + "px";
+        }
+
+        function setStatus(element, message, isError) {
+            element.textContent = message;
+            element.classList.toggle("error", Boolean(isError));
+        }
+
+        function parseTags(value) {
+            return value.split(",").map(function (tag) {
+                return tag.trim();
+            }).filter(Boolean);
+        }
+
+        function getCurrentProfile() {
+            return {
+                skills: parseTags(document.getElementById("skillsInput").value),
+                year: document.getElementById("yearInput").value.trim(),
+                city: document.getElementById("cityInput").value.trim(),
+                interests: parseTags(document.getElementById("interestsInput").value)
+            };
+        }
+
+        function resetVoiceAudio() {
+            if (voiceObjectUrl) {
+                URL.revokeObjectURL(voiceObjectUrl);
+                voiceObjectUrl = null;
+            }
+            voiceAudio.pause();
+            voiceAudio.removeAttribute("src");
+            voiceAudio.load();
+            voiceAudio.classList.add("hidden");
+        }
+
+        function readSavedProfile() {
+            try {
+                const saved = window.localStorage.getItem("eventradar-profile");
+                if (!saved) return null;
+
+                const profile = JSON.parse(saved);
+                const expectedKeys = ["skills", "year", "city", "interests"];
+                if (!profile || typeof profile !== "object" ||
+                    Object.keys(profile).some(function (key) { return !expectedKeys.includes(key); }) ||
+                    expectedKeys.some(function (key) { return !Object.prototype.hasOwnProperty.call(profile, key); }) ||
+                    !Array.isArray(profile.skills) ||
+                    !profile.skills.every(function (skill) { return typeof skill === "string"; }) ||
+                    !Array.isArray(profile.interests) ||
+                    !profile.interests.every(function (interest) { return typeof interest === "string"; }) ||
+                    typeof profile.year !== "string" ||
+                    typeof profile.city !== "string") {
+                    throw new Error("The saved profile has an unexpected format.");
+                }
+
+                return {
+                    skills: profile.skills,
+                    year: profile.year,
+                    city: profile.city,
+                    interests: profile.interests
+                };
+            } catch (error) {
+                console.error("Could not read the saved student profile:", error);
+                setStatus(profileStatus, "The saved profile could not be loaded. Please enter it again.", true);
+                return null;
+            }
+        }
+
+        function fillProfileForm(profile) {
+            document.getElementById("skillsInput").value = profile.skills.join(", ");
+            document.getElementById("yearInput").value = profile.year;
+            document.getElementById("cityInput").value = profile.city;
+            document.getElementById("interestsInput").value = profile.interests.join(", ");
+        }
+
+        function createTextElement(tagName, className, text) {
+            const element = document.createElement(tagName);
+            if (className) element.className = className;
+            element.textContent = text;
+            return element;
+        }
+
+        function getBrowserId() {
+            const storageKey = "eventradar-browser-id";
+            let id = window.localStorage.getItem(storageKey);
+            const uuidPattern = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+            if (!uuidPattern.test(id || "")) {
+                if (!window.crypto || typeof window.crypto.randomUUID !== "function") {
+                    throw new Error("This browser cannot create a secure anonymous ID.");
+                }
+                id = window.crypto.randomUUID();
+                window.localStorage.setItem(storageKey, id);
+            }
+            return id;
+        }
+
+        async function loadFavorites() {
+            browserId = getBrowserId();
+            const result = await requestJson("/api/favorites/" + encodeURIComponent(browserId));
+            if (!Array.isArray(result.favorites) ||
+                !result.favorites.every(function (eventId) { return typeof eventId === "string"; })) {
+                throw new Error("The saved hackathons response was invalid.");
+            }
+            favoriteEventIds = new Set(result.favorites);
+            favoritesReady = true;
+            showFavoritesButton.disabled = false;
+            setStatus(favoritesStatus, favoriteEventIds.size + " saved hackathon(s) synced with DynamoDB.", false);
+        }
+
+        function updateFavoriteButton(button, eventId) {
+            const isFavorite = favoriteEventIds.has(eventId);
+            button.textContent = isFavorite ? "★ Saved" : "☆ Save";
+            button.setAttribute("aria-pressed", String(isFavorite));
+            button.setAttribute("aria-label", isFavorite ? "Remove saved hackathon" : "Save hackathon");
+            button.disabled = !favoritesReady;
+        }
+
+        async function toggleFavorite(eventId, button) {
+            if (!favoritesReady || !browserId) return;
+            const wasFavorite = favoriteEventIds.has(eventId);
+            button.disabled = true;
+            try {
+                await requestJson(
+                    "/api/favorites/" + encodeURIComponent(browserId) + "/" + encodeURIComponent(eventId),
+                    { method: wasFavorite ? "DELETE" : "PUT" }
+                );
+                if (wasFavorite) {
+                    favoriteEventIds.delete(eventId);
+                } else {
+                    favoriteEventIds.add(eventId);
+                }
+                if (showingSavedOnly) {
+                    renderEventList();
+                } else {
+                    updateFavoriteButton(button, eventId);
+                }
+                setStatus(favoritesStatus, favoriteEventIds.size + " saved hackathon(s) synced with DynamoDB.", false);
+            } catch (error) {
+                console.error("Could not update saved hackathons:", error);
+                const reason = error instanceof Error ? error.message : "Unknown error";
+                setStatus(favoritesStatus, "Could not update saved hackathons: " + reason, true);
+                button.disabled = false;
+            }
+        }
+
+        function addEventFact(list, label, value, isWide) {
+            const item = document.createElement("div");
+            item.className = "event-fact" + (isWide ? " wide" : "");
+            const term = createTextElement("dt", "", label);
+            const description = createTextElement("dd", "", value || "Not published");
+            item.append(term, description);
+            list.append(item);
+        }
+
+        function isHttpUrl(value) {
+            try {
+                const url = new URL(value);
+                return url.protocol === "https:" || url.protocol === "http:";
+            } catch (error) {
+                return false;
+            }
+        }
+
+        function renderEventCard(item, isRanked) {
+            const match = isRanked ? item : null;
+            const event = match ? match.event : item;
+            const card = document.createElement("article");
+            card.className = "event-card";
+
+            const top = document.createElement("div");
+            top.className = "event-card-top";
+            const titleArea = document.createElement("div");
+            titleArea.className = "event-card-title";
+            titleArea.append(createTextElement("h3", "", event.name || "Untitled event"));
+            const favoriteButton = createTextElement("button", "favorite-button", "");
+            favoriteButton.type = "button";
+            updateFavoriteButton(favoriteButton, event.id);
+            favoriteButton.addEventListener("click", function () {
+                toggleFavorite(event.id, favoriteButton);
+            });
+            titleArea.append(favoriteButton);
+            const badges = document.createElement("div");
+            badges.className = "event-badges";
+
+            if (match) {
+                badges.append(createTextElement("span", "event-badge score", "Fit score " + match.score));
+                badges.append(createTextElement("span", "event-badge", "Rank #" + match.rank));
+            }
+            if (/closed/i.test(event.registration_status || "")) {
+                badges.append(createTextElement("span", "event-badge closed", "Registration closed"));
+            }
+            top.append(titleArea, badges);
+            card.append(top);
+
+            const facts = document.createElement("dl");
+            facts.className = "event-facts";
+            addEventFact(facts, "Dates", event.dates);
+            addEventFact(facts, "Registration deadline", event.registration_deadline || "Not published");
+            addEventFact(facts, "Eligibility", event.eligibility, true);
+            addEventFact(facts, "Prizes", event.prizes, true);
+            addEventFact(facts, "Mode", event.mode);
+            addEventFact(facts, "City", event.city);
+            addEventFact(facts, "Registration", event.registration_status, true);
+            addEventFact(facts, "Official contact", event.official_contact || "Not published", true);
+            card.append(facts);
+
+            if (match) {
+                const reason = document.createElement("p");
+                reason.className = "match-reason";
+                reason.append(createTextElement("strong", "", "Why this matches: "));
+                reason.append(document.createTextNode(match.whyThisMatchesYou || "No match explanation was provided."));
+
+                const points = [];
+                if (match.breakdown && match.breakdown.skills && match.breakdown.skills.score) {
+                    points.push("Skills +" + match.breakdown.skills.score);
+                }
+                if (match.breakdown && match.breakdown.interests && match.breakdown.interests.score) {
+                    points.push("Interests +" + match.breakdown.interests.score);
+                }
+                if (match.breakdown && match.breakdown.city && match.breakdown.city.score) {
+                    points.push("City +" + match.breakdown.city.score);
+                }
+                if (match.breakdown && match.breakdown.deadline && match.breakdown.deadline.score) {
+                    points.push("Deadline +" + match.breakdown.deadline.score);
+                }
+                if (points.length) {
+                    reason.append(createTextElement("span", "match-score-detail", points.join(" · ")));
+                }
+                card.append(reason);
+            }
+
+            if (isHttpUrl(event.link)) {
+                const link = createTextElement("a", "event-link", "Open official event page ↗");
+                link.href = event.link;
+                link.target = "_blank";
+                link.rel = "noopener noreferrer";
+                card.append(link);
+            } else {
+                card.append(createTextElement("p", "event-link", "Official event link unavailable."));
+            }
+
+            const prepButton = createTextElement("button", "prep-button", "Generate prep brief");
+            prepButton.type = "button";
+            prepButton.setAttribute("aria-expanded", "false");
+            const prepPanel = document.createElement("div");
+            prepPanel.className = "prep-brief hidden";
+            prepPanel.setAttribute("aria-live", "polite");
+            prepButton.addEventListener("click", async function () {
+                if (prepPanel.dataset.loaded === "true") {
+                    const isHidden = prepPanel.classList.toggle("hidden");
+                    prepButton.setAttribute("aria-expanded", String(!isHidden));
+                    prepButton.textContent = isHidden ? "Show prep brief" : "Hide prep brief";
+                    return;
+                }
+                await loadPrepBrief(event.id, prepButton, prepPanel);
+            });
+            card.append(prepButton, prepPanel);
+
+            return card;
+        }
+
+        function renderEventList(items, isRanked) {
+            if (arguments.length) {
+                currentEventItems = items;
+                currentListIsRanked = isRanked;
+            }
+            eventResults.replaceChildren();
+            const itemsToRender = showingSavedOnly
+                ? allEvents.filter(function (event) { return favoriteEventIds.has(event.id); })
+                : currentEventItems;
+            resultCount.textContent = String(itemsToRender.length);
+            if (!itemsToRender.length) {
+                eventResults.append(createTextElement(
+                    "p",
+                    "empty-events",
+                    showingSavedOnly
+                        ? "You have not saved any hackathons yet."
+                        : currentListIsRanked
+                        ? "No events can be ranked right now. Check the event list again later."
+                        : "No events are available right now."
+                ));
+                return;
+            }
+
+            itemsToRender.forEach(function (item) {
+                eventResults.append(renderEventCard(item, showingSavedOnly ? false : currentListIsRanked));
+            });
+        }
+
+        async function requestJson(url, options) {
+            const response = await fetch(url, options);
+            const result = await response.json();
+            if (!response.ok) {
+                throw new Error(result.error || "The server returned an error.");
+            }
+            return result;
+        }
+
+        function createPrepSection(title, items) {
+            if (!Array.isArray(items)) {
+                throw new Error("The prep brief response is missing a section.");
+            }
+
+            const section = document.createElement("section");
+            section.className = "prep-section";
+            section.append(createTextElement("h4", "", title));
+            items.forEach(function (item) {
+                if (!item || typeof item.text !== "string" || !item.text.trim()) {
+                    throw new Error("The prep brief contains an invalid item.");
+                }
+
+                const paragraph = createTextElement("p", "prep-item", item.text);
+                if (item.text.trim() !== "No source found") {
+                    if (!isHttpUrl(item.source_url)) {
+                        throw new Error("The prep brief contains an invalid source citation.");
+                    }
+                    const citation = createTextElement("a", "prep-citation", "Source: " + item.source_url);
+                    citation.href = item.source_url;
+                    citation.target = "_blank";
+                    citation.rel = "noopener noreferrer";
+                    paragraph.append(citation);
+                }
+                section.append(paragraph);
+            });
+            return section;
+        }
+
+        function renderPrepBrief(panel, brief) {
+            if (!brief || typeof brief !== "object") {
+                throw new Error("The prep brief response was not in the expected format.");
+            }
+            panel.replaceChildren();
+            panel.append(createTextElement(
+                "p",
+                "field-help",
+                "Only past-winner records with an exact event-name match are used."
+            ));
+            panel.append(createPrepSection("What past winners built", brief.winner_builds));
+            panel.append(createPrepSection("What judges look for", brief.judge_tips));
+        }
+
+        async function loadPrepBrief(eventId, button, panel) {
+            panel.classList.remove("hidden");
+            panel.replaceChildren(createTextElement("p", "prep-item", "Loading sourced prep brief…"));
+            button.disabled = true;
+            button.textContent = "Loading prep brief…";
+            button.setAttribute("aria-expanded", "true");
+
+            try {
+                const brief = await requestJson(
+                    "/api/events/" + encodeURIComponent(eventId) + "/prep-brief",
+                    { method: "POST" }
+                );
+                renderPrepBrief(panel, brief);
+                panel.dataset.loaded = "true";
+                button.textContent = "Hide prep brief";
+            } catch (error) {
+                console.error("Could not load prep brief:", error);
+                const reason = error instanceof Error ? error.message : "Unknown error";
+                panel.replaceChildren(createTextElement("p", "prep-error", "Could not load prep brief: " + reason));
+                button.textContent = "Try prep brief again";
+            } finally {
+                button.disabled = false;
+            }
+        }
+
+        async function rankEvents(profile) {
+            rankedProfileSnapshot = null;
+            voiceDigestButton.disabled = true;
+            resetVoiceAudio();
+            setStatus(voiceStatus, "Your voice digest will be ready after ranking.", false);
+            setStatus(eventsStatus, "Finding events that fit your profile…", false);
+            resultsSummary.textContent = "Ranking events using your profile.";
+
+            try {
+                const result = await requestJson("/api/events/rank", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ profile: profile })
+                });
+                if (!Array.isArray(result.matches)) {
+                    throw new Error("The ranking response did not include an event list.");
+                }
+
+                renderEventList(result.matches, true);
+                const submittedProfileSnapshot = JSON.stringify(profile);
+                const isCurrentProfileRanked = submittedProfileSnapshot === JSON.stringify(getCurrentProfile());
+                rankedProfileSnapshot = isCurrentProfileRanked ? submittedProfileSnapshot : null;
+                voiceDigestButton.disabled = !isCurrentProfileRanked || result.matches.length === 0;
+                setStatus(
+                    voiceStatus,
+                    !isCurrentProfileRanked
+                        ? "Profile changed while matches were loading. Submit the updated profile."
+                        : result.matches.length
+                            ? "Your top matches are ready. Generate the digest, then press play."
+                            : "There are no current matches to read aloud.",
+                    false
+                );
+                resultsSummary.textContent = "Ranked by skill and interest overlap, city, and registration deadline.";
+                const expiredCount = Number(result.excludedExpiredCount) || 0;
+                setStatus(
+                    eventsStatus,
+                    result.matches.length + " matches found." +
+                        (expiredCount ? " " + expiredCount + " event(s) with expired deadlines were excluded." : ""),
+                    false
+                );
+                if (!isCurrentProfileRanked) {
+                        setStatus(eventsStatus, "Profile changed while ranking. Submit again to refresh these results.", true);
+                }
+            } catch (error) {
+                console.error("Event ranking failed:", error);
+                const reason = error instanceof Error ? error.message : "Unknown error";
+                rankedProfileSnapshot = null;
+                voiceDigestButton.disabled = true;
+                setStatus(voiceStatus, "Rank your profile before generating a voice digest.", false);
+                setStatus(eventsStatus, "Could not rank events: " + reason, true);
+                resultsSummary.textContent = "Your previous event list is still shown.";
+            }
+        }
+
+        async function generateVoiceDigest() {
+            const profile = getCurrentProfile();
+            const profileSnapshot = JSON.stringify(profile);
+            if (rankedProfileSnapshot !== profileSnapshot || !profile.skills.length || !profile.interests.length) {
+                voiceDigestButton.disabled = true;
+                setStatus(voiceStatus, "Find matches again before creating a digest for changed profile details.", true);
+                return;
+            }
+
+            voiceDigestButton.disabled = true;
+            setStatus(voiceStatus, "Creating your voice digest…", false);
+            resetVoiceAudio();
+
+            try {
+                const response = await fetch("/api/events/voice-digest", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ profile: profile })
+                });
+                if (!response.ok) {
+                    const result = await response.json();
+                    throw new Error(result.error || "The voice request failed.");
+                }
+
+                const contentType = response.headers.get("content-type") || "";
+                if (!contentType.startsWith("audio/")) {
+                    throw new Error("The server did not return an audio file.");
+                }
+                const audioBlob = await response.blob();
+                if (!audioBlob.size) {
+                    throw new Error("The voice digest was empty.");
+                }
+                if (rankedProfileSnapshot !== JSON.stringify(getCurrentProfile())) {
+                    throw new Error("Your profile changed. Find matches again and retry.");
+                }
+
+                voiceObjectUrl = URL.createObjectURL(audioBlob);
+                voiceAudio.src = voiceObjectUrl;
+                voiceAudio.classList.remove("hidden");
+                setStatus(voiceStatus, "Voice digest ready. Press play to listen.", false);
+            } catch (error) {
+                console.error("Voice digest request failed:", error);
+                const reason = error instanceof Error ? error.message : "Unknown error";
+                setStatus(voiceStatus, "Could not create voice digest: " + reason, true);
+            } finally {
+                voiceDigestButton.disabled = rankedProfileSnapshot !== JSON.stringify(getCurrentProfile());
+            }
+        }
+
+        async function initializeEventRadar() {
+            const savedProfile = readSavedProfile();
+            if (savedProfile) fillProfileForm(savedProfile);
+            setStatus(eventsStatus, "Loading events…", false);
+            try {
+                await loadFavorites();
+            } catch (error) {
+                console.error("Could not load saved hackathons:", error);
+                const reason = error instanceof Error ? error.message : "Unknown error";
+                setStatus(favoritesStatus, "Saved hackathons are unavailable: " + reason, true);
+            }
+
+            try {
+                const result = await requestJson("/api/events");
+                if (!Array.isArray(result.events)) {
+                    throw new Error("The event list response was not in the expected format.");
+                }
+
+                allEvents = result.events;
+                if (savedProfile) {
+                    await rankEvents(savedProfile);
+                } else {
+                    renderEventList(result.events, false);
+                    resultsSummary.textContent = "Add your profile to see events ranked for you.";
+                    setStatus(eventsStatus, result.events.length + " events loaded.", false);
+                }
+            } catch (error) {
+                console.error("Could not load events:", error);
+                const reason = error instanceof Error ? error.message : "Unknown error";
+                setStatus(eventsStatus, "Could not load events: " + reason, true);
+                resultsSummary.textContent = "Try again after the EventRadar server is running.";
+                resultCount.textContent = "0";
+                eventResults.replaceChildren();
+            }
+        }
+
+        profileForm.addEventListener("submit", async function (event) {
+            event.preventDefault();
+            const profile = getCurrentProfile();
+
+            if (!profile.skills.length || !profile.interests.length) {
+                setStatus(profileStatus, "Enter at least one skill and one interest, separated by commas.", true);
+                return;
+            }
+            if (profile.skills.length > 30 || profile.interests.length > 30 ||
+                profile.skills.concat(profile.interests).some(function (tag) { return tag.length > 60; })) {
+                setStatus(profileStatus, "Use up to 30 skills and 30 interests; each tag must be 60 characters or fewer.", true);
+                return;
+            }
+
+            findMatchesButton.disabled = true;
+            setStatus(profileStatus, "", false);
+            try {
+                window.localStorage.setItem("eventradar-profile", JSON.stringify(profile));
+                setStatus(profileStatus, "Profile saved in this browser.", false);
+            } catch (error) {
+                console.error("Could not save the student profile:", error);
+                setStatus(profileStatus, "Could not save locally; matches will still be loaded for this session.", true);
+            }
+
+            try {
+                await rankEvents(profile);
+            } finally {
+                findMatchesButton.disabled = false;
+            }
+        });
+
+        profileForm.addEventListener("input", function () {
+            if (!rankedProfileSnapshot) return;
+            const isCurrentProfileRanked = rankedProfileSnapshot === JSON.stringify(getCurrentProfile());
+            voiceDigestButton.disabled = !isCurrentProfileRanked;
+            resetVoiceAudio();
+            setStatus(
+                voiceStatus,
+                isCurrentProfileRanked
+                    ? "Profile matches the ranked results. Generate a fresh voice digest."
+                    : "Profile changed. Find matches again before creating a digest.",
+                false
+            );
+        });
+
+        voiceDigestButton.addEventListener("click", generateVoiceDigest);
+        showFavoritesButton.addEventListener("click", function () {
+            showingSavedOnly = !showingSavedOnly;
+            showFavoritesButton.textContent = showingSavedOnly ? "Show matches" : "Show saved";
+            showFavoritesButton.setAttribute("aria-pressed", String(showingSavedOnly));
+            renderEventList();
+        });
+
+        async function sendPrompt(value) {
+            const prompt = value.trim();
+            if (!prompt || sendButton.disabled) return;
+
+            showConversation();
+            addMessage("user", prompt);
+            addRecent(prompt);
+            input.value = "";
+            resizeInput();
+            sendButton.disabled = true;
+            input.disabled = true;
+
+            const loading = document.createElement("article");
+            loading.className = "message assistant";
+            loading.innerHTML =
+                '<div class="message-avatar">' + assistantIcon +
+                '</div><div class="message-body"><div class="message-label">EventRadar is thinking</div>' +
+                '<div class="typing-dots" aria-label="Waiting for AI response"><span></span><span></span><span></span></div></div>';
+            conversation.append(loading);
+            conversation.scrollTop = conversation.scrollHeight;
+
+            try {
+                const response = await fetch("/api/chat", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: prompt })
+                });
+                const result = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(result.error || "The AI request failed.");
+                }
+                if (typeof result.reply !== "string" || !result.reply.trim()) {
+                    throw new Error("The AI returned an empty reply.");
+                }
+
+                addMessage("assistant", result.reply);
+            } catch (error) {
+                console.error("Chat request failed:", error);
+                const reason = error instanceof Error ? error.message : "Unknown error";
+                addMessage("assistant", "I couldn't get a reply: " + reason);
+            } finally {
+                loading.remove();
+                sendButton.disabled = false;
+                input.disabled = false;
+                input.focus();
+            }
+        }
+
+        form.addEventListener("submit", function (event) {
+            event.preventDefault();
+            sendPrompt(input.value);
+        });
+
+        input.addEventListener("input", resizeInput);
+        input.addEventListener("keydown", function (event) {
+            if (event.key === "Enter" && !event.shiftKey) {
+                event.preventDefault();
+                form.requestSubmit();
+            }
+        });
+
+        document.querySelectorAll("[data-prompt]").forEach(function (button) {
+            button.addEventListener("click", function () {
+                sendPrompt(button.dataset.prompt);
+            });
+        });
+
+        document.getElementById("newChatButton").addEventListener("click", function () {
+            showView("chat");
+            conversation.replaceChildren();
+            conversation.style.display = "none";
+            welcome.classList.remove("hidden");
+            input.value = "";
+            resizeInput();
+            closeSidebar();
+            input.focus();
+        });
+
+        eventsNavButton.addEventListener("click", function () { showView("events"); });
+        chatNavButton.addEventListener("click", function () { showView("chat"); });
+
+        menuButton.addEventListener("click", function () {
+            const isOpen = sidebar.classList.toggle("open");
+            menuButton.setAttribute("aria-expanded", String(isOpen));
+        });
+
+        document.getElementById("themeButton").addEventListener("click", function (event) {
+            const isDark = document.body.classList.toggle("dark-theme");
+            event.currentTarget.setAttribute("aria-label", isDark ? "Switch to light theme" : "Switch to dark theme");
+        });
+
+        document.addEventListener("click", function (event) {
+            if (window.innerWidth <= 760 && sidebar.classList.contains("open") &&
+                !sidebar.contains(event.target) && !menuButton.contains(event.target)) {
+                closeSidebar();
+            }
+        });
+
+        initializeEventRadar();
+    </script>
+</body>
+</html>

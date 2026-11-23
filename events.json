@@ -1,0 +1,307 @@
+{
+  "last_verified_on": "2026-11-22",
+  "events": [
+    {
+      "id": "code-red-2026",
+      "name": "Code Red 2026",
+      "dates": "2026-12-28 to 2026-12-29",
+      "registration_deadline": "2026-11-27",
+      "registration_status": "Open; Round 1 submissions close November 27, 2026",
+      "eligibility": "National-level event. The official page says the top 60 teams attend the Bengaluru finale; detailed participant eligibility is not published.",
+      "prizes": "₹2,25,000+ total prize pool; first and second place prizes are listed as ₹25,000 and ₹20,000 for most tracks.",
+      "mode": "Hybrid",
+      "city": "Bengaluru",
+      "official_contact": null,
+      "link": "https://www.codered26.xyz/",
+      "source_url": "https://www.codered26.xyz/",
+      "skills": ["AI", "cloud", "robotics", "quantum computing", "software development"],
+      "interests": ["AI", "cloud", "robotics", "quantum computing", "digital health", "startups"]
+    },
+    {
+      "id": "inceptrix-3-0",
+      "name": "INCEPTRIX 3.0",
+      "dates": "2027-02-19 to 2027-02-20",
+      "registration_deadline": "2026-12-24",
+      "registration_status": "Round 1 idea and prototype submissions open",
+      "eligibility": "Teams of 4–5 members with a mandatory female participant. Round 1 is free; selected finalists pay a ₹1,000 team seat fee.",
+      "prizes": "₹2,50,000 total: ₹1,25,000 first, ₹75,000 second, and ₹50,000 third.",
+      "mode": "Hybrid",
+      "city": "Bengaluru",
+      "official_contact": null,
+      "link": "https://inceptrix.in/",
+      "source_url": "https://inceptrix.in/",
+      "skills": ["software development", "prototyping", "system architecture"],
+      "interests": ["open innovation", "technology", "real-world problem solving"]
+    },
+    {
+      "id": "quantumard-national-hackathon-2027",
+      "name": "Quantumard National Hackathon 2027",
+      "dates": "Event dates to be announced; Phase 1 registration opens 2026-12-16",
+      "registration_deadline": "2026-12-15",
+      "registration_status": "Free pre-registration open; Phase 1 registration follows",
+      "eligibility": "Students at recognised colleges or universities in India; teams of 2–5, including cross-college teams.",
+      "prizes": "Prizes and participant benefits worth ₹5,00,000+; exact final awards are described on the official site.",
+      "mode": "Online",
+      "city": "Online (India)",
+      "official_contact": null,
+      "link": "https://qnh.quantumard.com/",
+      "source_url": "https://qnh.quantumard.com/",
+      "skills": ["AI", "machine learning", "web development", "cybersecurity", "fintech", "mobile development"],
+      "interests": ["AI", "cybersecurity", "fintech", "healthcare", "sustainability"]
+    },
+    {
+      "id": "hacksprint-3-0",
+      "name": "HackSprint 3.0",
+      "dates": "2027-02-05 to 2027-02-06",
+      "registration_deadline": "2026-12-28",
+      "registration_status": "Open; free registration and idea submission",
+      "eligibility": "College students in India, undergraduate or postgraduate, any year or branch; teams of 3–5.",
+      "prizes": "Prize details are not yet published.",
+      "mode": "Hybrid",
+      "city": "Coimbatore",
+      "official_contact": "Bala Surya S, +91 95970 75831; hacksprint.official@gmail.com",
+      "link": "https://www.hacksprint.tech/",
+      "source_url": "https://www.hacksprint.tech/",
+      "skills": ["AI", "software development", "machine learning", "prototyping"],
+      "interests": ["agriculture", "education", "healthcare", "wildlife conservation", "open innovation"]
+    },
+    {
+      "id": "ai-vibecoding-2027",
+      "name": "AI Vibecoding Hackathon 2027",
+      "dates": "2027-02-21 to 2027-02-22",
+      "registration_deadline": null,
+      "registration_status": "Applications open; closing date not published",
+      "eligibility": "Developers, designers, or builders able to attend in Bengaluru; solo applicants and teams of up to 4 are welcome.",
+      "prizes": "₹8,00,000 in cash prizes plus matching AI credits for the top three; finalist AI credit packages for places 4–7.",
+      "mode": "In person",
+      "city": "Bengaluru",
+      "official_contact": "hackathon@endangered.dev",
+      "link": "https://endangered.dev/hackathon-AI-vibecoding-2027-Bangalore",
+      "source_url": "https://endangered.dev/hackathon-AI-vibecoding-2027-Bangalore",
+      "skills": ["AI", "software development", "prototyping", "product design"],
+      "interests": ["AI", "developer tools", "real-world products"]
+    },
+    {
+      "id": "oakridge-codefest-2027",
+      "name": "Oakridge Codefest 2027",
+      "dates": "2027-02-05 to 2027-02-06",
+      "registration_deadline": null,
+      "registration_status": "Registration page available; deadline not published",
+      "eligibility": "School students; junior category is grades 6–8 and senior category is grade 9 and above.",
+      "prizes": "More than ₹1,00,000 in prizes; category-level amounts are not yet published.",
+      "mode": "In person",
+      "city": "Bengaluru",
+      "official_contact": "codefest@oakridge.in; +91 97402 55229",
+      "link": "https://codefest.oakridge.in/",
+      "source_url": "https://codefest.oakridge.in/",
+      "skills": ["coding", "software development", "prototyping"],
+      "interests": ["technology", "problem solving", "student innovation"]
+    },
+    {
+      "id": "scix-india-hackathon-2026",
+      "name": "SciX India Hackathon 2026",
+      "dates": "Stage 1 deadline 2026-11-30; prototype stage 2026-12-06 to 2027-01-05",
+      "registration_deadline": "2026-11-30",
+      "registration_status": "Open; Stage 1 submission closes November 30, 2026 at 11:59 PM",
+      "eligibility": "Students in engineering, pharmacy, biotechnology, or chemical technology; individual entries or teams of 2–4.",
+      "prizes": "At least ₹30,000 in cash prizes; selected projects may also be showcased at CiiA-6.",
+      "mode": "Online",
+      "city": "Online (India)",
+      "official_contact": null,
+      "link": "https://internshala.com/competitions/scix-india-hackathon-2026/",
+      "source_url": "https://internshala.com/competitions/scix-india-hackathon-2026/",
+      "skills": ["engineering", "biotechnology", "pharmacy", "chemical technology", "prototyping"],
+      "interests": ["science", "healthcare", "engineering", "applied technology"]
+    },
+    {
+      "id": "techfiesta-2027",
+      "name": "TechFiesta 2027",
+      "dates": "Idea submissions December 2026; online evaluations January 2027; finale February 2027",
+      "registration_deadline": null,
+      "registration_status": "Registration page available; exact deadline not published",
+      "eligibility": "Students from any college; teams of up to 6.",
+      "prizes": "Prize amounts are not published on the event page.",
+      "mode": "Hybrid",
+      "city": "Pune",
+      "official_contact": null,
+      "link": "https://techfiesta.pict.edu/",
+      "source_url": "https://techfiesta.pict.edu/",
+      "skills": ["software development", "prototyping", "presentation"],
+      "interests": ["technology", "innovation", "student projects"]
+    },
+    {
+      "id": "afterhours-exe-2027",
+      "name": "AFTERHOURS.exe 2027",
+      "dates": "2027-01-22 to 2027-01-23",
+      "registration_deadline": "2027-01-05",
+      "registration_status": "Open",
+      "eligibility": "Developers, designers, students, and technology enthusiasts; team-size details are not published.",
+      "prizes": "40,000 Sharp Tokens.",
+      "mode": "In person",
+      "city": "Hyderabad",
+      "official_contact": null,
+      "link": "https://hackindia.org/2027/afterhoursexe-2027",
+      "source_url": "https://hackindia.org/2027/afterhoursexe-2027",
+      "skills": ["software development", "AI", "prototyping"],
+      "interests": ["open innovation", "AI", "real-world problem solving"]
+    },
+    {
+      "id": "chennai-overdrive-2027",
+      "name": "HackIndia Chennai Overdrive 2027",
+      "dates": "2027-02-11 to 2027-02-12",
+      "registration_deadline": "2027-02-10",
+      "registration_status": "Open",
+      "eligibility": "Students, developers, designers, and technology enthusiasts; teams of 2–4, with individual registration for every member.",
+      "prizes": "Specific prize amounts are not published.",
+      "mode": "In person",
+      "city": "Rasipuram, Tamil Nadu",
+      "official_contact": null,
+      "link": "https://hackindia.org/2027/hackindia-chennai-overdrive-2027",
+      "source_url": "https://hackindia.org/2027/hackindia-chennai-overdrive-2027",
+      "skills": ["AI", "machine learning", "blockchain", "IoT", "software development"],
+      "interests": ["AI", "blockchain", "deep technology", "hardware", "open innovation"]
+    },
+    {
+      "id": "mailam-builds-2027",
+      "name": "Mailam Builds’27",
+      "dates": "2027-03-12 to 2027-03-13",
+      "registration_deadline": "2027-03-05",
+      "registration_status": "Open",
+      "eligibility": "Students, developers, and innovators; detailed team-size requirements are not published.",
+      "prizes": "40,000 Sharp Tokens.",
+      "mode": "In person",
+      "city": "Mailam, Tamil Nadu",
+      "official_contact": null,
+      "link": "https://hackindia.org/2027/mailam-builds27",
+      "source_url": "https://hackindia.org/2027/mailam-builds27",
+      "skills": ["AI", "software development", "prototyping"],
+      "interests": ["technology", "open innovation", "real-world problem solving"]
+    },
+    {
+      "id": "aether-2027",
+      "name": "Aether ’27 - India’s Vibe Coding Hackathon",
+      "dates": "2027-01-04 to 2027-01-29",
+      "registration_deadline": null,
+      "registration_status": "Open; registration closing date not published",
+      "eligibility": "Students, working professionals, developers, designers, founders, and AI enthusiasts across India; individual and team participation.",
+      "prizes": "Final prize categories and rewards have not been announced.",
+      "mode": "Online",
+      "city": "Online (India)",
+      "official_contact": null,
+      "link": "https://hackindia.org/2027/aether-27-indias-biggest-vibe-coding-hackathon",
+      "source_url": "https://hackindia.org/2027/aether-27-indias-biggest-vibe-coding-hackathon",
+      "skills": ["AI", "software development", "prototyping"],
+      "interests": ["AI-assisted development", "developer tools", "product building"]
+    },
+    {
+      "id": "fin-next-2027",
+      "name": "HackIndia Originals - FIN//NEXT 2027",
+      "dates": "2027-01-18 to 2027-02-28",
+      "registration_deadline": null,
+      "registration_status": "Open; registration closing date not published",
+      "eligibility": "Students, developers, professionals, researchers, and startup founders across India; individual or teams of 2–4.",
+      "prizes": "Specific prizes are not published.",
+      "mode": "Online",
+      "city": "Online (India)",
+      "official_contact": null,
+      "link": "https://hackindia.org/2027/hackindia-originals-finnext-2027",
+      "source_url": "https://hackindia.org/2027/hackindia-originals-finnext-2027",
+      "skills": ["AI", "machine learning", "fintech", "cybersecurity", "blockchain", "data analytics"],
+      "interests": ["digital payments", "financial security", "financial inclusion"]
+    },
+    {
+      "id": "prompt-time-2027",
+      "name": "PROMPT TIME 2027",
+      "dates": "2027-03-01 to 2027-03-28",
+      "registration_deadline": null,
+      "registration_status": "Open; registration closing date not published",
+      "eligibility": "Students, developers, designers, and founders across India; team-size requirements are not published.",
+      "prizes": "Prize pool and sponsor awards are not yet published.",
+      "mode": "Online",
+      "city": "Online (India)",
+      "official_contact": null,
+      "link": "https://hackindia.org/2027/prompt-time-2027-a-voice-image-and-video-ai-hackathon",
+      "source_url": "https://hackindia.org/2027/prompt-time-2027-a-voice-image-and-video-ai-hackathon",
+      "skills": ["AI", "voice AI", "image AI", "video AI", "software development"],
+      "interests": ["voice technology", "image generation", "video generation"]
+    },
+    {
+      "id": "hack-for-social-cause-2027",
+      "name": "Hack for Social Cause - VBYLD 2027",
+      "dates": "State events 2026-11-07 to 2026-12-05; national showcase 2027-01-10 to 2027-01-12",
+      "registration_deadline": "2026-10-31",
+      "registration_status": "Registration closed",
+      "eligibility": "Indian nationals aged 18–29 enrolled in an AICTE-registered higher education institution; teams of up to 3.",
+      "prizes": "₹75,000 first, ₹50,000 second, ₹25,000 third, and ₹15,000 each for fourth and fifth.",
+      "mode": "Hybrid",
+      "city": "State-level events across India; national showcase in New Delhi",
+      "official_contact": null,
+      "link": "https://mybharat.gov.in/pages/hack-for-social-cause",
+      "source_url": "https://mybharat.gov.in/pages/hack-for-social-cause",
+      "skills": ["AI", "machine learning", "GIS", "software development", "prototyping"],
+      "interests": ["social impact", "rural development", "education", "healthcare", "governance", "sustainability", "digital safety"]
+    }
+  ],
+  "past_winners": [
+    {
+      "event_name": "IndiaAI Impact Gen-AI Hackathon",
+      "year": 2025,
+      "winners": [
+        {
+          "track": "Crop identification using satellite data",
+          "place": "1st",
+          "team": "SAY",
+          "project": "Fine-tuned a geospatial foundation model for crop identification using an ensemble of loss functions and additional optical and SAR feature data."
+        },
+        {
+          "track": "Short-term energy load forecasting",
+          "place": "1st",
+          "team": "VISA",
+          "project": "Combined a Hour-of-Day baseline, TinyTimeMixer, and LightGBM through ensembling and stacking."
+        },
+        {
+          "track": "Agentic AI applications for real-world issues",
+          "place": "1st",
+          "team": "AyushmanAI - The Intelligent Medical Assistant",
+          "project": "A healthcare workflow assistant for appointment scheduling, diagnosis documentation, and follow-up."
+        }
+      ],
+      "what_judges_look_for": [
+        "Technical completeness and functionality",
+        "Practical viability and usability",
+        "Data quality and relevance",
+        "Relevance to current needs",
+        "Potential impact",
+        "Documentation quality",
+        "Scalability"
+      ],
+      "source_url": "https://cni.iisc.ac.in/hackathons/gen-AI-2025-results/"
+    },
+    {
+      "event_name": "Smart India Hackathon Grand Finale (Software Edition)",
+      "year": 2025,
+      "winners": [
+        {
+          "place": "Grand Finale winner",
+          "team": "Team NYX",
+          "project": "Maximizing Section Throughput Using AI-Powered Precise Train Traffic Control, for a Ministry of Railways problem statement."
+        }
+      ],
+      "what_judges_look_for": "No source found in the cited winner announcement.",
+      "source_url": "https://www.somaiya.edu.in/en/view-announcement/1026"
+    },
+    {
+      "event_name": "CODECRAFT’25 - State Level 24-Hour Hackathon",
+      "year": 2025,
+      "winners": [
+        {
+          "place": "1st",
+          "team": "TECH TITANS",
+          "project": "No source found in the cited event report."
+        }
+      ],
+      "what_judges_look_for": "No source found in the cited event report.",
+      "source_url": "https://mtechcse.sairam.edu.in/hackathon/"
+    }
+  ]
+}
